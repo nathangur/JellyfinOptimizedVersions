@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Optimized Versions</title>
+</head>
+<body>
+    <div id="optimizedVersionsConfigurationPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+        <div class="content-primary">
+            <div class="verticalSection">
+                <div class="sectionTitleContainer flex align-items-center">
+                    <h2 class="sectionTitle">Optimized Versions Settings</h2>
+                </div>
+                <form id="configForm" class="optimizedVersionsConfigForm">
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="OutputPath">Output Path</label>
+                        <input is="emby-input" type="text" id="OutputPath" name="OutputPath" class="emby-input" />
+                        <div class="fieldDescription">Path to store optimized versions</div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="maxConcurrentJobs">Max Concurrent Jobs</label>
+                        <input is="emby-input" type="number" id="maxConcurrentJobs" name="MaxConcurrentJobs" class="emby-input" min="1" max="8" />
+                        <div class="fieldDescription">Maximum number of concurrent transcoding jobs</div>
+                    </div>
+
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="VideoCodec">Video Codec</label>
+                        <select is="emby-select" id="VideoCodec" name="VideoCodec" class="emby-select-withcolor emby-select">
+                            <option value="libx264">H.264 (libx264)</option>
+                            <option value="libx265">H.265 (libx265)</option>
+                        </select>
+                    </div>
+
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="AudioCodec">Audio Codec</label>
+                        <select is="emby-select" id="AudioCodec" name="AudioCodec" class="emby-select-withcolor emby-select">
+                            <option value="aac">AAC</option>
+                            <option value="libopus">Opus</option>
+                        </select>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="AudioBitrate">Audio Bitrate (kbps)</label>
+                        <input is="emby-input" type="number" id="AudioBitrate" name="AudioBitrate" class="emby-input" min="64" max="384" step="32" />
+                    </div>
+
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="Preset">Encoding Preset</label>
+                        <select is="emby-select" id="Preset" name="Preset" class="emby-select-withcolor emby-select">
+                            <option value="medium">Medium (Recommended)</option>
+                            <option value="slow">Slow (Better Quality)</option>
+                            <option value="fast">Fast (Lower Quality)</option>
+                        </select>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="Crf">Quality (CRF)</label>
+                        <input is="emby-input" type="number" id="Crf" name="Crf" class="emby-input" min="18" max="28" />
+                        <div class="fieldDescription">Lower values = higher quality (18-28 recommended)</div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="MaxWidth">Max Width</label>
+                        <input is="emby-input" type="number" id="MaxWidth" name="MaxWidth" class="emby-input" min="480" max="3840" step="2" />
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="MaxHeight">Max Height</label>
+                        <input is="emby-input" type="number" id="MaxHeight" name="MaxHeight" class="emby-input" min="360" max="2160" step="2" />
+                    </div>
+
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="Container">Container Format</label>
+                        <select is="emby-select" id="Container" name="Container" class="emby-select-withcolor emby-select">
+                            <option value="mkv">MKV</option>
+                            <option value="mp4">MP4</option>
+                        </select>
+                    </div>
+
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="HardwareAcceleration">Hardware Acceleration</label>
+                        <select is="emby-select" id="HardwareAcceleration" name="HardwareAcceleration" class="emby-select-withcolor emby-select">
+                            <option value="none">Software Encoding (Recommended)</option>
+                            <option value="vaapi">VAAPI (Intel/AMD)</option>
+                            <option value="nvenc">NVENC (NVIDIA)</option>
+                        </select>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="MaxStorageGB">Max Storage (GB)</label>
+                        <input is="emby-input" type="number" id="MaxStorageGB" name="MaxStorageGB" class="emby-input" min="1" />
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="RetentionDays">Retention Days</label>
+                        <input is="emby-input" type="number" id="RetentionDays" name="RetentionDays" class="emby-input" min="1" />
+                    </div>
+
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var PluginConfig = {
+                pluginId: 'd6853bbd-0b01-466b-bfb8-eeaa4de3bc80'
+            };
+
+            document.querySelector('#configForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                Dashboard.showLoadingMsg();
+
+                ApiClient.getPluginConfiguration(PluginConfig.pluginId).then(function(config) {
+                    config.OutputPath = document.querySelector('#OutputPath').value;
+                    config.MaxConcurrentJobs = parseInt(document.querySelector('#maxConcurrentJobs').value) || 2;
+                    config.VideoCodec = document.querySelector('#VideoCodec').value;
+                    config.AudioCodec = document.querySelector('#AudioCodec').value;
+                    config.AudioBitrate = parseInt(document.querySelector('#AudioBitrate').value) || 192;
+                    config.Preset = document.querySelector('#Preset').value;
+                    config.Crf = parseInt(document.querySelector('#Crf').value) || 23;
+                    config.MaxWidth = parseInt(document.querySelector('#MaxWidth').value) || 1920;
+                    config.MaxHeight = parseInt(document.querySelector('#MaxHeight').value) || 1080;
+                    config.Container = document.querySelector('#Container').value;
+                    config.HardwareAcceleration = document.querySelector('#HardwareAcceleration').value;
+                    config.MaxStorageGB = parseInt(document.querySelector('#MaxStorageGB').value) || 100;
+                    config.RetentionDays = parseInt(document.querySelector('#RetentionDays').value) || 30;
+
+                    ApiClient.updatePluginConfiguration(PluginConfig.pluginId, config).then(function(result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    });
+                });
+            });
+
+            // Load configuration
+            ApiClient.getPluginConfiguration(PluginConfig.pluginId).then(function(config) {
+                document.querySelector('#OutputPath').value = config.OutputPath;
+                document.querySelector('#maxConcurrentJobs').value = config.MaxConcurrentJobs || 2;
+                document.querySelector('#VideoCodec').value = config.VideoCodec || 'libx264';
+                document.querySelector('#AudioCodec').value = config.AudioCodec || 'aac';
+                document.querySelector('#AudioBitrate').value = config.AudioBitrate || 192;
+                document.querySelector('#Preset').value = config.Preset || 'medium';
+                document.querySelector('#Crf').value = config.Crf || 23;
+                document.querySelector('#MaxWidth').value = config.MaxWidth || 1920;
+                document.querySelector('#MaxHeight').value = config.MaxHeight || 1080;
+                document.querySelector('#Container').value = config.Container || 'mkv';
+                document.querySelector('#HardwareAcceleration').value = config.HardwareAcceleration || 'none';
+                document.querySelector('#MaxStorageGB').value = config.MaxStorageGB || 100;
+                document.querySelector('#RetentionDays').value = config.RetentionDays || 30;
+                Dashboard.hideLoadingMsg();
+            });
+        </script>
+    </div>
+</body>
+</html>
