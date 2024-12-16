@@ -4,6 +4,8 @@ using Nathan.Plugin.OptimizedVersions.Data;
 using Nathan.Plugin.OptimizedVersions.Services;
 using MediaBrowser.Controller.Plugins;
 using Microsoft.EntityFrameworkCore;
+using MediaBrowser.Common.Configuration;
+using System.IO;
 
 namespace Nathan.Plugin.OptimizedVersions;
 
@@ -15,10 +17,11 @@ public class ServiceRegistrator : IPluginServiceRegistrator
     /// <inheritdoc />
     public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
     {
-        serviceCollection.AddDbContextFactory<OptimizedVersionsDbContext>(options =>
-            options.UseSqlite("Data Source=jellyfin.db"),
-            ServiceLifetime.Singleton
-        );
+        serviceCollection.AddDbContextFactory<OptimizedVersionsDbContext>((serviceProvider, opt) =>
+        {
+            var applicationPaths = serviceProvider.GetRequiredService<IApplicationPaths>();
+            opt.UseSqlite($"Filename={Path.Combine(applicationPaths.DataPath, "jobs.db")}");
+        });
         serviceCollection.AddScoped<IOptimizedVersionsDbService, OptimizedVersionsDbService>();
         serviceCollection.AddSingleton<TranscodingService>();
         serviceCollection.AddSingleton<ITranscodingService>(sp => sp.GetRequiredService<TranscodingService>());
