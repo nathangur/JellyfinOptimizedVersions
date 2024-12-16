@@ -45,12 +45,6 @@ namespace Nathan.Plugin.OptimizedVersions
             // Ensure data directory exists
             var dataPath = Path.Combine(applicationPaths.DataPath, "OptimizedVersions");
             Directory.CreateDirectory(dataPath);
-
-            // Register services
-            if (_applicationHost is IServiceProvider serviceProvider)
-            {
-                serviceProvider.GetService<IServiceCollection>()?.RegisterOptimizedVersionsServices();
-            }
         }
 
         /// <summary>
